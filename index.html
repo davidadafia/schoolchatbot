@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Marvel Studios</title>
+
+    <style>
+        /* Body centers everything */
+        body {
+            background-color: #bfd6d1;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* ensures vertical centering */
+            margin: 0;
+        }
+
+        /* Container for all content */
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            color: red;
+        }
+
+        h2 {
+            color: green;
+            font-family: cursive;
+        }
+
+        .thor {
+            color: blue;
+            font-size: 25px;
+        }
+
+        .loki {
+            font-style: italic;
+        }
+
+        .button1 {
+            background-color: green;
+            border-radius: 10px;
+            padding: 8px;
+        }
+
+        .button1 a {
+            color: white;
+            text-decoration: none;
+        }
+
+        table, th, td {
+            border: 2px solid black;
+            text-align: center;
+            border-collapse: collapse;
+            padding: 8px;
+            margin: 0 auto; /* center table */
+        }
+
+        iframe, video, audio {
+            display: block;
+            margin: 20px auto;
+        }
+
+        button:hover {
+            background-color: lightblue;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="top">
+            <h1 id="demo"><u>Samantha</u></h1>
+            <h2 id="lego"><b>My superhero journey</b></h2>
+            <p class="thor">I was 12 when I was <strong>bitten</strong> by a <i>radioactive fly</i>.</p>
+
+            <button type="button" onclick="makeTextLarge()">Make title bigger</button>
+            <button type="button" onclick="makeTextSmall()">Make title smaller</button>
+
+            <p class="loki">And my life has never been the same again.</p>
+        </div>
+
+        <img src="photo.jpg" width="300" height="350" alt="Samantha">
+
+        <h3>My super powers</h3>
+        <ol>
+            <li>Flying</li>
+            <li>Super Vision</li>
+            <li>Super Speed</li>
+        </ol>
+
+        <button class="button1">
+            <a href="https://www.canva.com/" target="_blank">Check this out</a>
+        </button>
+
+        <br><br>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Monday</th>
+                    <th>Wednesday</th>
+                    <th>Friday</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Football</td>
+                    <td>Volleyball</td>
+                    <td>Table Tennis</td>
+                </tr>
+                <tr>
+                    <td>Jump rope</td>
+                    <td>Oware</td>
+                    <td>Driving</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br>
+
+        <!-- Google Map -->
+        <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d29813.138839021358!2d-0.2538903456705411!3d5.566080057522615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sgh!4v1760526241580!5m2!1sen!2sgh" 
+            width="600" height="450" style="border:0;" 
+            allowfullscreen 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+
+        <!-- YouTube video embed -->
+        <h3>My Favorite Marvel Trailer</h3>
+        <iframe width="560" height="315"
+            src="https://www.youtube.com/embed/TcMBFSGVi1c"
+            title="YouTube video player"
+            frameborder="0"
+            allowfullscreen>
+        </iframe>
+
+        <!-- Local video example -->
+        <h3>My Training Video</h3>
+        <video width="560" height="315" controls>
+            <source src="supertraining.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+
+        <!-- Audio example -->
+        <h3>My Theme Song</h3>
+        <audio controls>
+            <source src="theme.mp3" type="audio/mpeg">
+            Your browser does not support the audio tag.
+        </audio>
+
+        <br>
+
+        <!-- JS Buttons -->
+        <button type="button" onclick="showDate()">Show date</button>
+        <button type="button" onclick="changeBackground()">Change title background</button>
+
+        <p id="ant">Hello world</p>
+    </div>
+
+    <script>
+        // Make h2 text bigger
+        function makeTextLarge() {
+            document.getElementById('lego').style.fontSize = '40px';
+        }
+
+        // Make h2 text smaller
+        function makeTextSmall() {
+            document.getElementById('lego').style.fontSize = '25px';
+        }
+
+        // Show current date and time
+        function showDate() {
+            document.getElementById('ant').innerHTML = Date();
+        }
+
+        // Change h1 background color
+        function changeBackground() {
+            document.getElementById('demo').style.backgroundColor = 'blue';
+            document.getElementById('demo').style.color = 'white';
+        }
+    </script>
+</body>
+</html>
