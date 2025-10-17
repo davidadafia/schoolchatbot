@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #0f0f0f;
+            --secondary-bg: #1a1a1a;
+            --card-bg: #252525;
+            --accent-color: #4f46e5;
+            --accent-hover: #6366f1;
+            --text-primary: #ffffff;
+            --text-secondary: #a3a3a3;
+            --border-color: #333333;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --progress-bg: #2d2d2d;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--primary-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--card-bg) 0%, #2a2a2a 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(79, 70, 229, 0.5);
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: var(--secondary-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .breadcrumb a {
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--accent-hover);
+        }
+
+        .breadcrumb span {
+            color: var(--text-secondary);
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Curriculum Page Styles */
+        .grade-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .grade-card {
+            background: linear-gradient(135deg, var(--card-bg) 0%, #2a2a2a 100%);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grade-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), var(--accent-hover));
+        }
+
+        .grade-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(79, 70, 229, 0.3);
+            background: linear-gradient(135deg, #2a2a2a 0%, var(--card-bg) 100%);
+        }
+
+        .grade-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .grade-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .grade-icon {
+            font-size: 2em;
+            opacity: 0.7;
+        }
+
+        .subjects-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .subjects-list li {
+            padding: 8px 0;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subjects-list li::before {
+            content: '📚';
+            font-size: 1em;
+        }
+
+        .grade-stats {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        /* Course List Styles */
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .course-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .course-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.2);
+        }
+
+        .course-banner {
+            height: 180px;
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: white;
+            position: relative;
+        }
+
+        .course-content {
+            padding: 20px;
+        }
+
+        .course-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .course-description {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        .course-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .course-duration {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+        }
+
+        .course-difficulty {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .difficulty-beginner {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success-color);
+        }
+
+        .difficulty-intermediate {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning-color);
+        }
+
+        .difficulty-advanced {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger-color);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--progress-bg);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-color), var(--accent-hover));
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+        }
+
+        /* Module List Styles */
+        .module-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .module-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .module-item:hover {
+            background: #2a2a2a;
+            transform: translateX(5px);
+        }
+
+        .module-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .module-number {
+            background: var(--accent-color);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .module-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            flex: 1;
+            margin-left: 15px;
+        }
+
+        .module-duration {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+        }
+
+        .module-description {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        /* Class View Styles */
+        .class-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+            height: calc(100vh - 200px);
+        }
+
+        .video-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-player {
+            background: #000;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .play-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(79, 70, 229, 0.9);
+            border: none;
+            color: white;
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .play-button:hover {
+            background: var(--accent-hover);
+            transform: scale(1.1);
+        }
+
+        .video-controls {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .video-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        .class-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab-button.active {
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .tab-content {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .sidebar {
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            max-height: calc(100vh - 200px);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .lesson-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .lesson-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lesson-item:hover {
+            background: #2a2a2a;
+        }
+
+        .lesson-item.active {
+            background: rgba(79, 70, 229, 0.1);
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .lesson-icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+        }
+
+        .lesson-item.completed .lesson-icon {
+            background: var(--success-color);
+        }
+
+        .lesson-item.active .lesson-icon {
+            background: var(--accent-color);
+        }
+
+        .lesson-info {
+            flex: 1;
+        }
+
+        .lesson-name {
+            font-size: 0.9em;
+            margin-bottom: 2px;
+        }
+
+        .lesson-duration {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+        }
+
+        .notes-section {
+            display: none;
+        }
+
+        .notes-section.active {
+            display: block;
+        }
+
+        .notes-editor {
+            width: 100%;
+            min-height: 200px;
+            background: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            color: var(--text-primary);
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--accent-color), var(--accent-hover));
+            color: white;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--card-bg);
+        }
+
+        @media (max-width: 1024px) {
+            .class-layout {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+
+            .sidebar {
+                max-height: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .grade-grid,
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .video-player {
+                height: 250px;
+            }
+
+            .class-tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-button {
+                min-width: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Course Management System</h1>
+            <p>Comprehensive learning platform for all grade levels</p>
+        </div>
+
+        <!-- Breadcrumb Navigation -->
+        <div class="breadcrumb" id="breadcrumb">
+            <a href="#" onclick="showPage('curriculum')">📚 Curriculum</a>
+        </div>
+
+        <!-- Curriculum Page -->
+        <div class="page active" id="curriculum-page">
+            <div class="grade-grid">
+                <div class="grade-card" onclick="showCourses('grade-1')">
+                    <div class="grade-header">
+                        <div class="grade-title">Grade 1</div>
+                        <div class="grade-icon">🎨</div>
+                    </div>
+                    <ul class="subjects-list">
+                        <li>Basic Mathematics</li>
+                        <li>English Language Arts</li>
+                        <li>Science Exploration</li>
+                        <li>Social Studies</li>
+                        <li>Art & Creativity</li>
+                    </ul>
+                    <div class="grade-stats">
+                        <div class="stat">
+                            <div class="stat-number">5</div>
+                            <div class="stat-label">Subjects</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">42</div>
+                            <div class="stat-label">Lessons</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">28h</div>
+                            <div class="stat-label">Duration</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grade-card" onclick="showCourses('grade-2')">
+                    <div class="grade-header">
+                        <div class="grade-title">Grade 2</div>
+                        <div class="grade-icon">📖</div>
+                    </div>
+                    <ul class="subjects-list">
+                        <li>Elementary Mathematics</li>
+                        <li>Reading & Writing</li>
+                        <li>Natural Sciences</li>
+                        <li>Geography Basics</li>
+                        <li>Physical Education</li>
+                    </ul>
+                    <div class="grade-stats">
+                        <div class="stat">
+                            <div class="stat-number">5</div>
+                            <div class="stat-label">Subjects</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">48</div>
+                            <div class="stat-label">Lessons</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">32h</div>
+                            <div class="stat-label">Duration</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grade-card" onclick="showCourses('grade-3')">
+                    <div class="grade-header">
+                        <div class="grade-title">Grade 3</div>
+                        <div class="grade-icon">🔢</div>
+                    </div>
+                    <ul class="subjects-list">
+                        <li>Advanced Mathematics</li>
+                        <li>Language Arts</li>
+                        <li>Science & Nature</li>
+                        <li>World Cultures</li>
+                        <li>Music & Arts</li>
+                    </ul>
+                    <div class="grade-stats">
+                        <div class="stat">
+                            <div class="stat-number">5</div>
+                            <div class="stat-label">Subjects</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">54</div>
+                            <div class="stat-label">Lessons</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">38h</div>
+                            <div class="stat-label">Duration</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grade-card" onclick="showCourses('grade-4')">
+                    <div class="grade-header">
+                        <div class="grade-title">Grade 4</div>
+                        <div class="grade-icon">🧪</div>
+                    </div>
+                    <ul class="subjects-list">
+                        <li>Intermediate Mathematics</li>
+                        <li>English Literature</li>
+                        <li>Physical Sciences</li>
+                        <li>History & Civics</li>
+                        <li>Technology</li>
+                    </ul>
+                    <div class="grade-stats">
+                        <div class="stat">
+                            <div class="stat-number">5</div>
+                            <div class="stat-label">Subjects</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">62</div>
+                            <div class="stat-label">Lessons</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Duration</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grade-card" onclick="showCourses('grade-5')">
+                    <div class="grade-header">
+                        <div class="grade-title">Grade 5</div>
+                        <div class="grade-icon">🌍</div>
+                    </div>
+                    <ul class="subjects-list">
+                        <li>Pre-Algebra</li>
+                        <li>Advanced Reading</li>
+                        <li>Earth Sciences</li>
+                        <li>World Geography</li>
+                        <li>Critical Thinking</li>
+                    </ul>
+                    <div class="grade-stats">
+                        <div class="stat">
+                            <div class="stat-number">5</div>
+                            <div class="stat-label">Subjects</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">68</div>
+                            <div class="stat-label">Lessons</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">48h</div>
+                            <div class="stat-label">Duration</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grade-card" onclick="showCourses('grade-6')">
+                    <div class="grade-header">
+                        <div class="grade-title">Grade 6</div>
+                        <div class="grade-icon">⚗️</div>
+                    </div>
+                    <ul class="subjects-list">
+                        <li>Algebra Fundamentals</li>
+                        <li>Literature Analysis</li>
+                        <li>Biology Basics</li>
+                        <li>Ancient History</li>
+                        <li>Digital Literacy</li>
+                    </ul>
+                    <div class="grade-stats">
+                        <div class="stat">
+                            <div class="stat-number">5</div>
+                            <div class="stat-label">Subjects</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">72</div>
+                            <div class="stat-label">Lessons</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-number">54h</div>
+                            <div class="stat-label">Duration</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course List Page -->
+        <div class="page" id="courses-page">
+            <div class="course-grid" id="course-grid">
+                <!-- Courses will be dynamically loaded here -->
+            </div>
+        </div>
+
+        <!-- Module List Page -->
+        <div class="page" id="modules-page">
+            <div class="module-list" id="module-list">
+                <!-- Modules will be dynamically loaded here -->
+            </div>
+        </div>
+
+        <!-- Class View Page -->
+        <div class="page" id="class-page">
+            <div class="class-layout">
+                <div class="video-section">
+                    <div class="video-player">
+                        <button class="play-button" onclick="playVideo()">▶</button>
+                    </div>
+                    <div class="video-controls">
+                        <div class="video-title" id="video-title">Introduction to Algebra</div>
+                        <div class="video-meta">
+                            <span>Duration: 12:34</span>
+                            <span>Progress: 0%</span>
+                        </div>
+                    </div>
+                    <div class="class-tabs">
+                        <button class="tab-button active" onclick="showTab('overview')">Overview</button>
+                        <button class="tab-button" onclick="showTab('notes')">Notes</button>
+                        <button class="tab-button" onclick="showTab('resources')">Resources</button>
+                        <button class="tab-button" onclick="showTab('discussion')">Discussion</button>
+                    </div>
+                    <div class="tab-content">
+                        <div id="overview-tab" class="tab-section">
+                            <h3>Lesson Overview</h3>
+                            <p>In this lesson, we'll introduce the fundamental concepts of algebra, including variables, expressions, and basic equations. You'll learn how to:</p>
+                            <ul style="margin: 15px 0; padding-left: 20px;">
+                                <li>Identify variables and constants</li>
+                                <li>Write algebraic expressions</li>
+                                <li>Solve simple linear equations</li>
+                                <li>Apply algebraic thinking to real-world problems</li>
+                            </ul>
+                            <p>By the end of this lesson, you'll have a solid foundation in algebraic thinking that will prepare you for more advanced mathematical concepts.</p>
+                        </div>
+                        <div id="notes-tab" class="tab-section notes-section">
+                            <h3>Your Notes</h3>
+                            <textarea class="notes-editor" placeholder="Take notes during the lesson..."></textarea>
+                            <div style="margin-top: 15px;">
+                                <button class="btn btn-primary">Save Notes</button>
+                                <button class="btn btn-secondary">Clear</button>
+                            </div>
+                        </div>
+                        <div id="resources-tab" class="tab-section notes-section">
+                            <h3>Additional Resources</h3>
+                            <ul style="margin: 15px 0; padding-left: 20px;">
+                                <li><a href="#" style="color: var(--accent-color);">Algebra Basics PDF Guide</a></li>
+                                <li><a href="#" style="color: var(--accent-color);">Practice Problems Worksheet</a></li>
+                                <li><a href="#" style="color: var(--accent-color);">Khan Academy: Intro to Algebra</a></li>
+                                <li><a href="#" style="color: var(--accent-color);">Interactive Algebra Calculator</a></li>
+                            </ul>
+                        </div>
+                        <div id="discussion-tab" class="tab-section notes-section">
+                            <h3>Class Discussion</h3>
+                            <p>Join the conversation with your classmates and instructor. Ask questions, share insights, and help each other learn.</p>
+                            <div style="margin-top: 20px; padding: 15px; background: var(--secondary-bg); border-radius: 8px;">
+                                <p><strong>Discussion coming soon!</strong></p>
+                                <p>This feature will be available in the next update.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="sidebar-header">
+                        <div class="sidebar-title">Course Content</div>
+                        <div class="progress-text">3 of 12 completed</div>
+                    </div>
+                    <div class="lesson-list" id="lesson-list">
+                        <!-- Lessons will be dynamically loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentGrade = '';
+        let currentCourse = '';
+        let currentModule = '';
+
+        // Sample data structure
+        const coursesData = {
+            'grade-1': [
+                {
+                    id: 'math-basics',
+                    title: 'Basic Mathematics',
+                    description: 'Introduction to numbers, counting, and simple arithmetic operations.',
+                    icon: '🔢',
+                    duration: '6 weeks',
+                    difficulty: 'beginner',
+                    progress: 75,
+                    modules: 8
+                },
+                {
+                    id: 'english-arts',
+                    title: 'English Language Arts',
+                    description: 'Reading, writing, and communication skills for young learners.',
+                    icon: '📝',
+                    duration: '8 weeks',
+                    difficulty: 'beginner',
+                    progress: 60,
+                    modules: 10
+                },
+                {
+                    id: 'science-explore',
+                    title: 'Science Exploration',
+                    description: 'Discover the world around us through fun experiments and observations.',
+                    icon: '🔬',
+                    duration: '5 weeks',
+                    difficulty: 'beginner',
+                    progress: 40,
+                    modules: 6
+                }
+            ],
+            'grade-2': [
+                {
+                    id: 'elem-math',
+                    title: 'Elementary Mathematics',
+                    description: 'Building on basic math skills with addition, subtraction, and problem-solving.',
+                    icon: '➕',
+                    duration: '7 weeks',
+                    difficulty: 'beginner',
+                    progress: 85,
+                    modules: 9
+                },
+                {
+                    id: 'reading-writing',
+                    title: 'Reading & Writing',
+                    description: 'Developing reading comprehension and writing skills.',
+                    icon: '📚',
+                    duration: '8 weeks',
+                    difficulty: 'beginner',
+                    progress: 70,
+                    modules: 11
+                }
+            ]
+        };
+
+        const modulesData = {
+            'math-basics': [
+                {
+                    id: 1,
+                    title: 'Numbers and Counting',
+                    description: 'Learn to recognize and count numbers from 1 to 100.',
+                    duration: '45 min',
+                    lessons: 5
+                },
+                {
+                    id: 2,
+                    title: 'Basic Addition',
+                    description: 'Introduction to adding numbers using visual aids and manipulatives.',
+                    duration: '50 min',
+                    lessons: 6
+                },
+                {
+                    id: 3,
+                    title: 'Basic Subtraction',
+                    description: 'Learn subtraction through hands-on activities and games.',
+                    duration: '45 min',
+                    lessons: 5
+                },
+                {
+                    id: 4,
+                    title: 'Shapes and Patterns',
+                    description: 'Identify basic shapes and create simple patterns.',
+                    duration: '40 min',
+                    lessons: 4
+                }
+            ],
+            'elem-math': [
+                {
+                    id: 1,
+                    title: 'Advanced Addition',
+                    description: 'Two-digit addition with and without regrouping.',
+                    duration: '55 min',
+                    lessons: 7
+                },
+                {
+                    id: 2,
+                    title: 'Advanced Subtraction',
+                    description: 'Two-digit subtraction with borrowing concepts.',
+                    duration: '50 min',
+                    lessons: 6
+                },
+                {
+                    id: 3,
+                    title: 'Introduction to Multiplication',
+                    description: 'Understanding multiplication as repeated addition.',
+                    duration: '60 min',
+                    lessons: 8
+                }
+            ]
+        };
+
+        const lessonsData = [
+            { id: 1, title: 'What are Variables?', duration: '8:30', completed: true },
+            { id: 2, title: 'Writing Expressions', duration: '12:15', completed: true },
+            { id: 3, title: 'Solving Simple Equations', duration: '15:45', completed: true },
+            { id: 4, title: 'Working with Coefficients', duration: '10:20', completed: false, active: true },
+            { id: 5, title: 'Combining Like Terms', duration: '13:30', completed: false },
+            { id: 6, title: 'Distribution Property', duration: '11:45', completed: false },
+            { id: 7, title: 'Solving Multi-step Equations', duration: '16:20', completed: false },
+            { id: 8, title: 'Word Problems', duration: '14:10', completed: false },
+            { id: 9, title: 'Graphing Linear Equations', duration: '18:35', completed: false },
+            { id: 10, title: 'Practice Assessment', duration: '25:00', completed: false }
+        ];
+
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId + '-page').classList.add('active');
+        }
+
+        function updateBreadcrumb(path) {
+            const breadcrumb = document.getElementById('breadcrumb');
+            breadcrumb.innerHTML = path;
+        }
+
+        function showCourses(gradeId) {
+            currentGrade = gradeId;
+            const gradeName = gradeId.replace('-', ' ').replace('g', 'G');
+            
+            updateBreadcrumb(`
+                <a href="#" onclick="showPage('curriculum')">📚 Curriculum</a>
+                <span>></span>
+                <span>${gradeName}</span>
+            `);
+
+            const courses = coursesData[gradeId] || [];
+            const courseGrid = document.getElementById('course-grid');
+            
+            courseGrid.innerHTML = courses.map(course => `
+                <div class="course-card" onclick="showModules('${course.id}')">
+                    <div class="course-banner">
+                        <span>${course.icon}</span>
+                    </div>
+                    <div class="course-content">
+                        <div class="course-title">${course.title}</div>
+                        <div class="course-description">${course.description}</div>
+                        <div class="course-meta">
+                            <div class="course-duration">📅 ${course.duration}</div>
+                            <div class="course-difficulty difficulty-${course.difficulty}">
+                                ${course.difficulty}
+                            </div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${course.progress}%"></div>
+                        </div>
+                        <div class="progress-text">${course.progress}% Complete • ${course.modules} Modules</div>
+                    </div>
+                </div>
+            `).join('');
+
+            showPage('courses');
+        }
+
+        function showModules(courseId) {
+            currentCourse = courseId;
+            const course = Object.values(coursesData).flat().find(c => c.id === courseId);
+            const gradeName = currentGrade.replace('-', ' ').replace('g', 'G');
+            
+            updateBreadcrumb(`
+                <a href="#" onclick="showPage('curriculum')">📚 Curriculum</a>
+                <span>></span>
+                <a href="#" onclick="showCourses('${currentGrade}')">${gradeName}</a>
+                <span>></span>
+                <span>${course?.title || 'Course'}</span>
+            `);
+
+            const modules = modulesData[courseId] || [];
+            const moduleList = document.getElementById('module-list');
+            
+            moduleList.innerHTML = modules.map(module => `
+                <div class="module-item" onclick="showClass('${module.id}')">
+                    <div class="module-header">
+                        <div class="module-number">${module.id}</div>
+                        <div class="module-title">${module.title}</div>
+                        <div class="module-duration">⏱️ ${module.duration} • ${module.lessons} lessons</div>
+                    </div>
+                    <div class="module-description">${module.description}</div>
+                </div>
+            `).join('');
+
+            showPage('modules');
+        }
+
+        function showClass(moduleId) {
+            currentModule = moduleId;
+            const course = Object.values(coursesData).flat().find(c => c.id === currentCourse);
+            const module = modulesData[currentCourse]?.find(m => m.id == moduleId);
+            const gradeName = currentGrade.replace('-', ' ').replace('g', 'G');
+            
+            updateBreadcrumb(`
+                <a href="#" onclick="showPage('curriculum')">📚 Curriculum</a>
+                <span>></span>
+                <a href="#" onclick="showCourses('${currentGrade}')">${gradeName}</a>
+                <span>></span>
+                <a href="#" onclick="showModules('${currentCourse}')">${course?.title || 'Course'}</a>
+                <span>></span>
+                <span>${module?.title || 'Module'}</span>
+            `);
+
+            // Update video title
+            document.getElementById('video-title').textContent = module?.title || 'Lesson Title';
+
+            // Load lessons in sidebar
+            const lessonList = document.getElementById('lesson-list');
+            lessonList.innerHTML = lessonsData.map(lesson => `
+                <div class="lesson-item ${lesson.completed ? 'completed' : ''} ${lesson.active ? 'active' : ''}" 
+                     onclick="selectLesson(${lesson.id})">
+                    <div class="lesson-icon"></div>
+                    <div class="lesson-info">
+                        <div class="lesson-name">${lesson.title}</div>
+                        <div class="lesson-duration">${lesson.duration}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            showPage('class');
+        }
+
+        function selectLesson(lessonId) {
+            // Update active lesson
+            document.querySelectorAll('.lesson-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Update video title
+            const lesson = lessonsData.find(l => l.id === lessonId);
+            if (lesson) {
+                document.getElementById('video-title').textContent = lesson.title;
+            }
+        }
+
+        function showTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Show/hide tab content
+            document.querySelectorAll('.tab-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            const targetTab = document.getElementById(tabName + '-tab');
+            if (targetTab) {
+                targetTab.style.display = 'block';
+            }
+        }
+
+        function playVideo() {
+            const button = event.target;
+            button.innerHTML = '⏸️';
+            button.style.background = 'rgba(239, 68, 68, 0.9)';
+            
+            // Simulate video playing
+            setTimeout(() => {
+                button.innerHTML = '▶';
+                button.style.background = 'rgba(79, 70, 229, 0.9)';
+            }, 3000);
+        }
+
+        // Initialize the application
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '0';
+            document.body.style.transform = 'translateY(20px)';
+            document.body.style.transition = 'all 0.8s ease';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+                document.body.style.transform = 'translateY(0)';
+            }, 100);
+        });
+
+        // Initialize with overview tab active
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('overview-tab').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
